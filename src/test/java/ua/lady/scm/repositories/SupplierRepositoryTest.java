@@ -2,19 +2,19 @@ package ua.lady.scm.repositories;
 
 import lombok.extern.java.Log;
 import org.assertj.core.util.Lists;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import ua.lady.scm.domain.Price;
-import ua.lady.scm.domain.PriceList;
+import ua.lady.scm.domain.Product;
 import ua.lady.scm.domain.Supplier;
 import ua.lady.scm.domain.SupplierProduct;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import static org.junit.Assert.assertNotNull;
@@ -23,15 +23,26 @@ import static org.junit.Assert.assertNotNull;
 @DataJpaTest
 @Log
 public class SupplierRepositoryTest {
+
+    public static final String SUPPLIER_NAME = "My Test Supplier";
     @Autowired
     private SupplierRepository supplierRepository;
     @Autowired
     private SupplierProductRepository supplierProductRepository;
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Before
+    public void setUp() throws Exception {
+        Supplier supplier = new Supplier();
+        supplier.setName(SUPPLIER_NAME);
+        supplier = supplierRepository.saveAndFlush(supplier);
+    }
 
     @Test
     public void createSupplier() throws Exception {
         Supplier supplier = new Supplier();
-        supplier.setName("My Test Supplier");
+        supplier.setName(SUPPLIER_NAME);
         supplier = supplierRepository.saveAndFlush(supplier);
         assertNotNull(supplier.getId());
         SupplierProduct product = new SupplierProduct();
@@ -45,38 +56,33 @@ public class SupplierRepositoryTest {
     }
 
     @Test
-    public void priceLists() throws Exception {
-        Supplier supplier = new Supplier();
-        supplier.setName("My Test Supplier");
-        PriceList priceList = new PriceList();
-        priceList.setSupplier(supplier);
-        supplier.setPriceLists(Lists.newArrayList(priceList));
-        supplier = supplierRepository.saveAndFlush(supplier);
-        log.info(supplier.toString());
+    public void mapping() throws Exception {
+        Product product = Product.builder()
+                .id(111)
+                .brand("brand")
+                .gender("M")
+                .group("edp")
+                .name("some long name")
+                .type("type")
+                .volume("100")
+                .build();
+        product = productRepository.save(product);
 
-    }
+        Supplier supplier = supplierRepository.findByName(SUPPLIER_NAME);
 
-    @Test
-    public void prices() throws Exception {
-        Supplier supplier = new Supplier();
-        supplier.setName("My Test Supplier");
-        PriceList priceList = new PriceList();
-        priceList.setSupplier(supplier);
-        supplier.setPriceLists(Lists.newArrayList(priceList));
-        supplier = supplierRepository.saveAndFlush(supplier);
-        log.info(supplier.toString());
+        SupplierProduct supplierProduct = new SupplierProduct();
+        supplierProduct.setName("some name");
+        supplierProduct.setBusinessId("bus_id");
+        supplierProduct.setProduct(product);
+        supplierProduct.setSupplier(supplier);
+        supplierProduct.setPrice(new Price(100d));
+        supplierProductRepository.save(supplierProduct);
 
-        SupplierProduct product = new SupplierProduct();
-        product.setId("Some ID");
-        product.setName("Some Product");
-        product = supplierProductRepository.save(product);
-        Price price = new Price();
-        price.setValue(BigDecimal.TEN);
-        priceList.setPrices(new HashMap<SupplierProduct, Price>());
-        priceList.getPrices().put(product, price);
-        supplier = supplierRepository.saveAndFlush(supplier);
-        log.info(supplier.toString());
-        log.info(supplier.getPriceLists().get(0).getPrices().toString());
+        SupplierProduct byProductAndSupplier = supplierProductRepository.findByProductAndSupplier(product, supplier);
 
+        log.info(byProductAndSupplier.toString());
+        Assert.assertNotNull(byProductAndSupplier);
+        Assert.assertNotNull(byProductAndSupplier.getProduct());
+        Assert.assertNotNull(byProductAndSupplier.getSupplier());
     }
 }

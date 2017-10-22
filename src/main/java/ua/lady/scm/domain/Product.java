@@ -1,9 +1,10 @@
 package ua.lady.scm.domain;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 /**
  * Created by stani on 22-Jun-17.
@@ -11,13 +12,17 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = "id")
+//@EqualsAndHashCode(of = "id")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 public class Product {
-
+    @Id
     private Integer id;
 
     private String name;
-
+    @Column(name = "classification")
     private String group;
 
     private String brand;

@@ -1,27 +1,24 @@
 package ua.lady.scm.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.math.BigDecimal;
 
 @Getter
 @Setter
 @ToString
-@Entity
+@NoArgsConstructor
+@Embeddable
 public class Price {
-    @Id
-    @GeneratedValue
-    private Integer id;
     @Column
     private BigDecimal value;
-    @ManyToOne
-    @JoinColumn(name = "price_list_id")
-    private PriceList priceList;
-    @ManyToOne
-    @JoinColumn(name = "sup_prod_id")
-    private SupplierProduct product;
 
+    public Price(double value) {
+        this.value = BigDecimal.valueOf(value);
+    }
 }

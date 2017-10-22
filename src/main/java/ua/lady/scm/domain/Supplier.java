@@ -19,6 +19,9 @@ public class Supplier {
     private String name;
     @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
     private List<SupplierProduct> products;
-    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
-    private List<PriceList> priceLists;
+    private ExcelConfig excelConfig;
+
+    public ExcelConfig getExcelConfig() {
+        return excelConfig;
+    }
 }
