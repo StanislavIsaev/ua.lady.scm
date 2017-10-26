@@ -8,14 +8,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 import ua.lady.scm.domain.Price;
 import ua.lady.scm.domain.Product;
 import ua.lady.scm.domain.Supplier;
 import ua.lady.scm.domain.SupplierProduct;
-
-import java.util.Arrays;
-import java.util.HashSet;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -49,7 +48,10 @@ public class SupplierRepositoryTest {
         product.setName("Some Product");
         product.setSupplier(supplier);
         supplier.setProducts(Lists.newArrayList(product));
-        product.setProperties(new HashSet<>(Arrays.asList("Prop1", "Prop2")));
+        product.setGender("M");
+        product.setVolume("100");
+        product.setBrand("D&G");
+        product.setGroup("edp");
         product = supplierProductRepository.saveAndFlush(product);
 
         supplierRepository.findAll().stream().map(Supplier::toString).forEach(log::info);
@@ -84,5 +86,11 @@ public class SupplierRepositoryTest {
         Assert.assertNotNull(byProductAndSupplier);
         Assert.assertNotNull(byProductAndSupplier.getProduct());
         Assert.assertNotNull(byProductAndSupplier.getSupplier());
+    }
+
+    @Test
+    public void pagination() throws Exception {
+        Page<SupplierProduct> page = supplierProductRepository.findAll(new PageRequest(3, 100));
+
     }
 }

@@ -1,6 +1,9 @@
 package ua.lady.scm.domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,10 +12,7 @@ import javax.persistence.Id;
 /**
  * Created by stani on 22-Jun-17.
  */
-@Getter
-@Setter
-@ToString
-//@EqualsAndHashCode(of = "id")
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

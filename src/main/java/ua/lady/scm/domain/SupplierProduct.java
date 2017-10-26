@@ -1,34 +1,46 @@
 package ua.lady.scm.domain;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Getter
 @Setter
 @ToString(exclude = {"supplier", "product"})
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"BUSINESS_ID", "SUPPLIER_ID"})
+})
 public class SupplierProduct {
     @Id
     @GeneratedValue
     private Integer id;
 
-    @Column
+    @Column(name = "BUSINESS_ID")
     private String businessId;
 
     @Column
     private String name;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "PRICE"))
     private Price price;
 
-    @ElementCollection
-    private Set<String> properties;
+    @Column(name = "classification")
+    private String group;
 
-    @ManyToOne
+    private String brand;
+
+    private String gender;
+
+    private String volume;
+
+    private String type;
+
+    @ManyToOne(optional = false)
     @JoinColumn(name = "SUPPLIER_ID", nullable = false, updatable = false)
     private Supplier supplier;
 

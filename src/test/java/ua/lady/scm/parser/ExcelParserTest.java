@@ -84,7 +84,6 @@ public class ExcelParserTest {
 
     @Test
     public void parfex() throws Exception {
-        // very strange: view of businessId and the value don't match
         Map<String, Integer> map = new HashMap<>();
         map.put("businessId", 7);
         map.put("name", 8);

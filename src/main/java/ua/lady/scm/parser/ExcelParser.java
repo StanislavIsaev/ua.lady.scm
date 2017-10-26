@@ -14,6 +14,7 @@ import ua.lady.scm.domain.ExcelConfig;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.logging.Level;
 
 @Service
 @Log
@@ -35,15 +36,17 @@ public class ExcelParser {
             }
             Sheet sheet = workbook.getSheetAt(0);
             sheet.getRow(config.getHeaderRowIndex() + 1);
-            log.info(config.toString());
-            log.info("Last Logical Row Num: " + sheet.getLastRowNum());
-            log.info("Last Physical Row Num: " + sheet.getPhysicalNumberOfRows());
+            log.finest(config.toString());
+            log.finest("Last Logical Row Num: " + sheet.getLastRowNum());
+            log.finest("Last Physical Row Num: " + sheet.getPhysicalNumberOfRows());
             List<String> categories = new ArrayList<>();
             List<String> tmpCategories = new ArrayList<>();
             boolean categoryProcessed = false;
             for (int i = config.getHeaderRowIndex(); i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
-                printRow(row);
+                if (log.isLoggable(Level.FINEST)) {
+                    printRow(row);
+                }
                 if (checkIfRowIsEmpty(row)) continue;
                 //check if price present - this is product row
                 int priceIx = config.getColumnIndex("price") - 1;
@@ -105,7 +108,7 @@ public class ExcelParser {
     }
 
     private void printRow(Row row) {
-        log.info(String.format("[%d] first[%d] last[%d] physical[%d]", row.getRowNum(), row.getFirstCellNum(), row.getLastCellNum(), row.getPhysicalNumberOfCells()));
+        log.finest(String.format("[%d] first[%d] last[%d] physical[%d]", row.getRowNum(), row.getFirstCellNum(), row.getLastCellNum(), row.getPhysicalNumberOfCells()));
         short minColIx = row.getFirstCellNum();
         short maxColIx = row.getLastCellNum();
         for (short colIx = minColIx; colIx < maxColIx; colIx++) {
@@ -113,7 +116,7 @@ public class ExcelParser {
             if (cell == null) {
                 continue;
             }
-            log.info(String.format("\t%s", printCell(cell)));
+            log.finest(String.format("\t%s", printCell(cell)));
 
         }
     }
